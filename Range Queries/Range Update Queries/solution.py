@@ -8,7 +8,7 @@ def read_numbers():
 
 class SegmentTree:
     def __init__(self, A: "list[int]") -> None:
-        self.difference_array = A[:] + [0]
+        self.difference_array = A[:]
 
         for i in range(1, len(A)):
             self.difference_array[i] -= A[i - 1]
@@ -21,6 +21,9 @@ class SegmentTree:
 
     def add(self, k: int, x: int) -> None:
         k += self.n
+
+        if k >= len(self.tree):
+            return
 
         self.tree[k] += x
         k //= 2
@@ -49,6 +52,13 @@ class SegmentTree:
 
         return s
 
+    def update(self, a: int, b: int, u: int) -> None:
+        self.add(a, u)
+        self.add(b + 1, -u)
+
+    def get(self, k: int) -> int:
+        return self.sum(0, k)
+
 
 n, q = read_numbers()
 A = list(read_numbers())
@@ -60,8 +70,7 @@ for _ in range(q):
 
     if values[0] == 1:
         a, b, u = values[1:]
-        tree.add(a - 1, u)
-        tree.add(b, -u)
+        tree.update(a - 1, b - 1, u)
     else:
         k = values[1]
-        print(tree.sum(0, k - 1))
+        print(tree.get(k - 1))
